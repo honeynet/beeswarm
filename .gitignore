@@ -1,0 +1,46 @@
+*.py[cod]
+
+# Apple garbage files
+.DS_Store
+._.DS_Store
+.apdisk
+
+# C extensions
+*.so
+
+# Packages
+*.egg
+*.egg-info
+*.tar.gz
+dist
+build
+eggs
+parts
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+.idea
+config.py
+modbus_tk
+conpot.db
+docs/build
+.DS_Store
