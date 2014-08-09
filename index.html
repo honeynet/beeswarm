@@ -20,38 +20,39 @@
 
           <h1 id="project_title">Beeswarm</h1>
           <h2 id="project_tagline">Active IDS made easy</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/honeynet/beeswarm/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/honeynet/beeswarm/tarball/master">Download this project as a tar.gz file</a>
-            </section>
         </header>
     </div>
 
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
-
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<h3>Installing Beeswarm server</h3>
+<p>Instaling the Beesswarm server is as easy as downloading the package with pip and afterwards starting beeswarm with the --server
+parameter. Make sure to note the auto generated administrative password:</p>
+<pre><code>$ pip install conpot
+Downloading/unpacking beeswarm
+    ...
+Successfully installed Beeswarm
+Cleaning up...
+$ mkdir server_workdir
+$ cd server-workdir/
+$ beeswarm --server
+*** Please answer a few configuration options ***
+* Communication between drones (honeypots and clients) and server *
+* Please make sure that drones can always contact the Beeswarm server using the information that you are about to enter. *
+IP or hostname of server: 127.0.0.1
+****************************************************************************
+Default password for the admin account is: uqbrlsabeqpbwy
+****************************************************************************
+2014-08-09 11:31:19,874 (beeswarm.server.server) Starting server listening on port 5000
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+          <p> After installation, the managament interface can be reached on port 5000:</p>
+<img src="images/admin_screensshot.png"/>
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<h3>Deploying drones</h3>
+...
 
 <h3>
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
@@ -60,16 +61,13 @@ $ git checkout gh-pages
 
 <h3>
 <a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
       </section>
     </div>
 
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">Beeswarm maintained by <a href="https://github.com/honeynet">honeynet</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+        <p class="copyright">Beeswarm is maintained by <a href="https://www.linkedin.com/in/johnnykv">Johnny Vestergaard</a></p>
       </footer>
     </div>
 
