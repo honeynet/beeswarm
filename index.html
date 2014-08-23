@@ -42,7 +42,7 @@
             and the rest will be used as drones.</p>
 
         <h5>Installing and starting the server</h5>
-        <p> On the VM that will be used as server do the following:
+        <p> On the VM that will be used as server do the following, and make sure to note the administrative password:
             <pre><code>$ pip install beeswarm
 Downloading/unpacking beeswarm
 ...
@@ -51,6 +51,11 @@ Cleaning up...
 $ mkdir server_workdir
 $ cd server-workdir/
 $ beeswarm --server
+...
+****************************************************************************
+Default password for the admin account is: uqbrlsabeqpbwy
+****************************************************************************
+...
 </code></pre>
         <h5>Installing beeswarm on the drones</h5>
           <pre><code>$ pip install beeswarm
@@ -69,52 +74,18 @@ $ beeswarm --config https://192.168.1.22/drones/add/ui182uu
           </code></pre>
         </p>
         <h5>Drone configuration and monitoring</h5>
-        Drones can be configured as honeypots or clients from the management interface.
-
-        <h3>Getting up and running - long version</h3>
-
-        <p>Instaling the Beesswarm server is as easy as downloading the package with pip and afterwards starting
-            beeswarm with the --server
-            parameter. Make sure to note the auto generated administrative password:</p>
-<pre><code>$ pip install beeswarm
-Downloading/unpacking beeswarm
-...
-Successfully installed Beeswarm
-Cleaning up...
-$ mkdir server_workdir
-$ cd server-workdir/
-$ beeswarm --server
-*** Please answer a few configuration options ***
-* Communication between drones (honeypots and clients) and server *
-* Please make sure that drones can always contact the Beeswarm server using the information that you are about to
-enter. *
-IP or hostname of server: 127.0.0.1
-****************************************************************************
-Default password for the admin account is: uqbrlsabeqpbwy
-****************************************************************************
-2014-08-09 11:31:19,874 (beeswarm.server.server) Starting server listening on port 5000
-</code></pre>
-
-        <p> After installation, the managament interface can be reached on port 5000:</p>
+        <p> After installation, the management interface can be reached on port 5000 where drones can be configured
+        and security events can be monitored.</p>
         <img src="images/admin_screensshot.png"/>
-
-
-        <h3>Deploying drones</h3>
-        ...
 
         <h3>
             <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span
                     class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
-        <p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate
-            a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub
-            Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>),
-            PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner
-            (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-        <h3>
-            <a name="support-or-contact" class="anchor" href="#support-or-contact"><span
-                    class="octicon octicon-link"></span></a>Support or Contact</h3>
+        <p>The Beeswam project is being lead by <a href="http://dk.linkedin.com/in/johnnykv">Johnny Vestergaard</a> under
+            the umbrella of <a href="https://www.honeynet.org/">The Honeynet Project</a>. The project was selected for
+            <a href="https://www.google-melange.com/gsoc/project/details/google/gsoc2013/czardoz/5698390809640960">Google Summer of Code 2013</a> where
+            <a href="http://in.linkedin.com/pub/aniket-panse/25/184/b55">Aniket Panse</a> was selected as to work on the project.
     </section>
 </div>
 
