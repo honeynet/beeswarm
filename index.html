@@ -41,7 +41,7 @@
             server and the rest will be used as drones.</p>
 
         <h5>Installing and starting the server</h5>
-        <p> On the VM to be set up as the server, perform the following steps. Make sure to write down the administrative password!
+        <p> On the VM to be set up as the server, perform the following steps. Make sure to write down the administrative password.
 
             <pre><code>$ pip install beeswarm
 Downloading/unpacking beeswarm
@@ -55,23 +55,24 @@ $ beeswarm --server
 ****************************************************************************
 Default password for the admin account is: uqbrlsabeqpbwy
 ****************************************************************************
-...
-</code></pre>
+...</code></pre>
         <h5>Installing beeswarm on the drones</h5>
+        On each machine that will be used as a drone, install Beeswarm using pip:
           <pre><code>$ pip install beeswarm
 Downloading/unpacking beeswarm
 ...
 Successfully installed Beeswarm
-Cleaning up...
-          </code></pre>
+Cleaning up...</code></pre>
         <h5>Starting the drones</h5>
-        To be able to initially activate drones, extract the temporary configuration URL from the beeswarm managment interface
-         by clicking "Add drone". The configuration url will look like this: https://192.168.1.22/drones/add/ui182uu.</br>
-        Use the same configuration URL to start the beeswarm drones on all the remaining VM's:
+        To activate the drones, extract the temporary configuration URL from the beeswarm managment interface
+        by clicking the <em>+ Drone</em> headline:
+
+        <img src="images/add_drone_url.png"/>
+
+        Use the URL to link each drone to the beeswarm server:
           <pre><code>$ mkdir drone_workdir
 $ cd drone_workdir
-$ beeswarm --config https://192.168.1.22/drones/add/ui182uu
-          </code></pre>
+$ beeswarm --config https://192.168.1.157/drones/add/f71457</code></pre>
         </p>
         <h5>Drone configuration and monitoring</h5>
         <p> After installation, the management interface can be reached on port 5000 where drones can be configured
@@ -86,7 +87,7 @@ $ beeswarm --config https://192.168.1.22/drones/add/ui182uu
                     class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
         <p>The Beeswarm project is being lead by <a href="http://dk.linkedin.com/in/johnnykv">Johnny Vestergaard</a> under
-            the umbrella of <a href="https://www.honeynet.org/">The Honeynet Project</a>. The project was selected for
+            the umbrella of <a href="https://www.honeynet.org/">The Honeynet Project</a>. The project was chosen for
             <a href="https://www.google-melange.com/gsoc/project/details/google/gsoc2013/czardoz/5698390809640960">Google Summer of Code 2013</a> where
             <a href="http://in.linkedin.com/pub/aniket-panse/25/184/b55">Aniket Panse</a> was selected to work on the project.
     </section>
@@ -95,8 +96,6 @@ $ beeswarm --config https://192.168.1.22/drones/add/ui182uu
 <!-- FOOTER  -->
 <div id="footer_wrap" class="outer">
     <footer class="inner">
-        <p class="copyright">Beeswarm is maintained by <a href="https://www.linkedin.com/in/johnnykv">Johnny
-            Vestergaard</a></p>
     </footer>
 </div>
 
