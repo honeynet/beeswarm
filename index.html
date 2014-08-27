@@ -43,7 +43,9 @@
         <h5>Installing and starting the server</h5>
         <p> On the VM to be set up as the server, perform the following steps. Make sure to write down the administrative password.
 
-            <pre><code>$ pip install beeswarm
+            <pre><code>$ sudo apt-get install libffi-dev build-essential python-dev python-pip libssl-dev libxml2-dev libxslt1-dev
+$ pip install pydes --allow-external pydes --allow-unverified pydes
+$ pip install beeswarm
 Downloading/unpacking beeswarm
 ...
 Successfully installed Beeswarm
@@ -58,7 +60,10 @@ Default password for the admin account is: uqbrlsabeqpbwy
 ...</code></pre>
         <h5>Installing beeswarm on the drones</h5>
         On each machine that will be used as a drone, install Beeswarm using pip:
-          <pre><code>$ pip install beeswarm
+          <pre><code>
+              $ sudo apt-get install libffi-dev build-essential python-dev python-pip libssl-dev libxml2-dev libxslt1-dev
+$ pip install pydes --allow-external pydes --allow-unverified pydes
+$ pip install beeswarm
 Downloading/unpacking beeswarm
 ...
 Successfully installed Beeswarm
