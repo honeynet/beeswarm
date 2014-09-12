@@ -18,6 +18,7 @@ import logging
 
 from fs.osfs import OSFS
 
+from beeswarm.shared.models.protocol_type import ProtocolType
 from beeswarm.drones.honeypot.models.session import Session
 
 
@@ -44,6 +45,7 @@ class HandlerBase(object):
         self.vfsystem = OSFS(os.path.join(workdir, 'data/vfs'))
         # serviceport
         self.port = int(options['port'])
+        self.protocol_type = ProtocolType.TCP
 
     def create_session(self, address, socket):
         protocol = self.__class__.__name__.lower()

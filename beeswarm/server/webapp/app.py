@@ -257,6 +257,10 @@ def configure_honeypot(id):
                                         'max_attempts': form.capabilities__pop3s__protocol_specific_data__max_attempts.data,
                                     })
 
+        if form.capabilities__sip__enabled.data:
+            honeypot.add_capability('sip', form.capabilities__sip__port.data,
+                                    {})
+
         if form.capabilities__ssh__enabled.data:
             honeypot.add_capability('ssh', form.capabilities__ssh__port.data, {})
 

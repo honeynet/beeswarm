@@ -24,11 +24,12 @@ import ntplib
 
 import gevent
 from gevent import Greenlet
-from gevent.server import StreamServer
+from gevent.server import StreamServer, DatagramServer
 import requests
 from requests.exceptions import Timeout, ConnectionError
 
 import beeswarm
+from beeswarm.shared.models.protocol_type import ProtocolType
 from beeswarm.drones.honeypot.capabilities import handlerbase
 from beeswarm.drones.honeypot.models.session import Session
 from beeswarm.drones.honeypot.consumer.consumer import Consumer
@@ -148,11 +149,18 @@ class Honeypot(object):
 
                 try:
                     # Convention: All capability names which end in 's' will be wrapped in ssl.
-                    if cap_name.endswith('s'):
-                        server = StreamServer(('0.0.0.0', port), cap.handle_session,
-                                              keyfile=self.key, certfile=self.cert)
+                    if cap.protocol_type == ProtocolType.TCP:
+                        if cap_name.endswith('s'):
+                            server = StreamServer(('0.0.0.0', port), cap.handle_session,
+                                                  keyfile=self.key, certfile=self.cert)
+                        else:
+                            server = StreamServer(('0.0.0.0', port), cap.handle_session)
+                    elif cap.protocol_type == ProtocolType.UDP:
+                        server = DatagramServer(('0.0.0.0', port), cap.handle_session)
+                        server.start()
+                        cap.socket = server.socket._sock
                     else:
-                        server = StreamServer(('0.0.0.0', port), cap.handle_session)
+                        assert False
 
                     logger.debug('Adding {0} capability with options: {1}'.format(cap_name, options))
                     self._servers.append(server)
@@ -172,6 +180,7 @@ class Honeypot(object):
     def stop(self):
         """Stops services"""
         for s in self._servers:
+            s.close()
             s.stop()
 
         for g in self._server_greenlets:

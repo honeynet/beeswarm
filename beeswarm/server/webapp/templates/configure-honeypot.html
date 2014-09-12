@@ -60,6 +60,7 @@
             <li><a href="#pop3" data-toggle="tab">POP3</a></li>
             <li><a href="#pop3s" data-toggle="tab">POP3s</a></li>
             <li><a href="#ssh" data-toggle="tab">SSH</a></li>
+            <li><a href="#sip" data-toggle="tab">SIP</a></li>
             <li><a href="#certificate" data-toggle="tab">Certificate</a></li>
         </ul>
 
@@ -177,6 +178,16 @@
                 <fieldset>
                     <legend>SSH Options</legend>
                     {% for field in [form.capabilities__ssh__enabled, form.capabilities__ssh__port] %}
+                    {% if not field|bootstrap_is_hidden_field %}
+                    {{ macros.horizontal_field(field) }}
+                    {%- endif %}
+                    {% endfor %}
+                </fieldset>
+            </div>
+            <div id="sip" class="tab-pane">
+                <fieldset>
+                    <legend>SIP Options</legend>
+                    {% for field in [form.capabilities__sip__enabled, form.capabilities__sip__port] %}
                     {% if not field|bootstrap_is_hidden_field %}
                     {{ macros.horizontal_field(field) }}
                     {%- endif %}

@@ -63,6 +63,9 @@ class HoneypotConfigurationForm(Form):
     capabilities__pop3__port = IntegerField(default=110, validators=port_validators)
     capabilities__pop3__protocol_specific_data__max_attempts = IntegerField(default=3, label='Login Attempts')
 
+    capabilities__sip__enabled = BooleanField(default=False, label='Enabled')
+    capabilities__sip__port = IntegerField(default=5060, validators=port_validators)
+
     capabilities__pop3s__enabled = BooleanField(default=False, label='Enabled')
     capabilities__pop3s__port = IntegerField(default=995, validators=port_validators)
     capabilities__pop3s__protocol_specific_data__max_attempts = IntegerField(default=3, label='Login Attempts')
