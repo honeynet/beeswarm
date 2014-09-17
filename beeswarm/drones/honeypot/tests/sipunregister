@@ -1,0 +1,14 @@
+REGISTER sip:192.168.1.1 SIP/2.0
+Via: SIP/2.0/UDP 172.16.2.1:56084;rport;branch=z9h94bKPjqlaaT-qxoK2GrLXDJwVkQBpQehxCcLpl
+Max-Forwards: 70
+From: "7025551212" <sip:7025551212@192.168.1.1>;tag=1zBbx.zO8JNk3eNqErV8jGJKcJ6U4DY4
+To: "7025551212" <sip:7025551212@192.168.1.1>
+Call-ID: 420R4aNI9v26yzQ5u7t9nyM0YVj9mEjM
+CSeq: 1234 REGISTER
+User-Agent: Bria iOS 3.1.1
+Supported: outbound, path
+Contact: "7025551212" <sip:7025551212@172.16.2.1:56084;ob>;reg-id=1;+sip.instance="<urn:uuid:11111111-1111-1111-1111-111111111111>"
+Expires: 0
+Allow: PRACK, INVITE, ACK, BYE, CANCEL, UPDATE, INFO, SUBSCRIBE, NOTIFY, REFER, MESSAGE, OPTIONS
+Content-Length:  0
+
