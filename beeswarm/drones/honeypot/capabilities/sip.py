@@ -5,7 +5,6 @@ from beeswarm.shared.models.protocol_type import ProtocolType
 from beeswarm.drones.honeypot.capabilities.handlerbase import HandlerBase
 
 logger = logging.getLogger(__name__)
-sessiondict = { }
 
 class Sip(HandlerBase, DatagramServer):
     
@@ -13,6 +12,7 @@ class Sip(HandlerBase, DatagramServer):
         super(Sip, self).__init__(sessions, options, workdir)
         self.protocol_type = ProtocolType.UDP
         self.socket = None
+        sessiondict = { }
     
     def handle_session(self, data, address):
         
@@ -35,10 +35,6 @@ class Sip(HandlerBase, DatagramServer):
             sessiondict[sessionkey] = session
             session.activity()
         
-        ## we are started, output a message that we have a connection
-        #
-        print 'Received UDP from {0}'.format(address)
-        
         ## Log to our session this SIP message
         #
         session.transcript_incoming(data)
@@ -49,7 +45,7 @@ class Sip(HandlerBase, DatagramServer):
         
         ## if we got a valid SIP package, send it to the parser, if we don't, we'll ignore the message
         #
-        if (package.search(data)):
+        if package.search(data):
             
             ## ok - now to parse out all the stuff they've sent us
             #
@@ -63,12 +59,12 @@ class Sip(HandlerBase, DatagramServer):
             #
             p = re.compile("^REGISTER .*")
             m = p.match(data)
-            if (m):
+            if m:
                 valid = 1
                 
                 ## If Expires is set to 0, this is an unregister message
                 #
-                if (parsed['expires'] == 'Expires: 0\n'):
+                if parsed['expires'] == 'Expires: 0\n':
                     valid = 1
                     self.ProxyAuthRequired407(parsed, address, session)
                     session.connected = False
@@ -77,24 +73,18 @@ class Sip(HandlerBase, DatagramServer):
                 #
                 else:
                     self.NotFound404(parsed, address, session)
-                    if 'auth' in parsed.keys():
-                        print 'Auth: {0}'.format(parsed['auth'])
-                    if 'user' in parsed.keys():
-                        print 'User: {0}'.format(parsed['user'])
-                    if 'realm' in parsed.keys():
-                        print 'Realm: {0}'.format(parsed['realm'])
-            
+        
             ## INVITE
             #
             p = re.compile("^INVITE .*")
             m = p.match(data)
-            if (m):
+            if m:
                 valid = 1
                 self.ProxyAuthRequired407(parsed, address, session)
             
             ## Otherwise, send it back as Bad Requst
             #
-            if (valid == 0):
+            if valid == 0:
                 self.BadRequest400(parsed, address, session)
     
     def parseMessage(self, data):
@@ -105,7 +95,7 @@ class Sip(HandlerBase, DatagramServer):
         maxforwards = ''
         p = re.compile(".*^(Max-Forwards: [^0-9]+).*", re.MULTILINE|re.DOTALL);
         m = p.match(data)
-        if (m):
+        if m:
             maxforwards = m.group(1) + '\n'
         response['maxforwards'] = maxforwards
         
@@ -113,7 +103,7 @@ class Sip(HandlerBase, DatagramServer):
         fromaddr = ''
         p = re.compile(".*^(From:[^\n]+).*", re.MULTILINE|re.DOTALL);
         m = p.match(data)
-        if (m):
+        if m:
             fromaddr = m.group(1) + '\n'
         response['fromaddr'] = fromaddr
         
@@ -121,7 +111,7 @@ class Sip(HandlerBase, DatagramServer):
         toaddr = ''
         p = re.compile(".*^(To:[^\n]+).*", re.MULTILINE|re.DOTALL);
         m = p.match(data)
-        if (m):
+        if m:
             toaddr = m.group(1) + '\n'
         response['toaddr'] = toaddr
         
@@ -129,7 +119,7 @@ class Sip(HandlerBase, DatagramServer):
         callid = ''
         p = re.compile(".*^(Call-ID: [^\n]+)$.*", re.MULTILINE|re.DOTALL);
         m = p.match(data)
-        if (m):
+        if m:
             callid = m.group(1) + '\n'
         response['callid'] = callid
         
@@ -137,7 +127,7 @@ class Sip(HandlerBase, DatagramServer):
         cseq = ''
         p = re.compile(".*^(CSeq: [0-9]+ [A-Z]+)$.*", re.MULTILINE|re.DOTALL);
         m = p.match(data)
-        if (m):
+        if m:
             cseq = m.group(1) + '\n'
         response['cseq'] = cseq
         
@@ -146,80 +136,86 @@ class Sip(HandlerBase, DatagramServer):
         auth = ''
         p = re.compile(".*^Authorization: ([^\n]+).*", re.MULTILINE|re.DOTALL);
         m = p.match(data)
-        if (m):
+        if m:
             auth = m.group(1) + ''
             response['auth'] = auth
             
             user = ''
             p = re.compile('Digest username="([^"]+)"')
             n = p.match(auth)
-            if (n):
+            if n:
                 user = n.group(1)
             response['user'] = user
             
             realm = ''
             p = re.compile('.*realm="([^"]+)"')
             n = p.match(auth)
-            if (n):
+            if n:
                 realm = n.group(1)
             response['realm'] = realm
             
             nonce = ''
             p = re.compile('.*nonce="([^"]+)"')
             n = p.match(auth)
-            if (n):
+            if n:
                 nonce = n.group(1)
             response['nonce'] = nonce
             
             uri = ''
             p = re.compile('.*uri="([^"]+)"')
             n = p.match(auth)
-            if (n):
+            if n:
                 uri = n.group(1)
             response['uri'] = uri
             
             resp = ''
             p = re.compile('.*response="([^"]+)"')
             n = p.match(auth)
-            if (n):
+            if n:
                 resp = n.group(1)
             response['resp'] = resp
             
             cnonce = ''
             p = re.compile('.*cnonce="([^"]+)"')
             n = p.match(auth)
-            if (n):
+            if n:
                 cnonce = n.group(1)
             response['cnonce'] = cnonce
             
             opaque = ''
             p = re.compile('.*opaque="([^"]+)"')
             n = p.match(auth)
-            if (n):
+            if n:
                 opaque = n.group(1)
             response['opaque'] = opaque
             
             qop = ''
             p = re.compile('.*qop=([a-zA-Z0-9]+)')
             n = p.match(auth)
-            if (n):
+            if n:
                 qop = n.group(1)
             response['qop'] = qop
             
             nc = ''
             p = re.compile('.*nc=([0-9]+)')
             n = p.match(auth)
-            if (n):
+            if n:
                 nc = n.group(1)
             response['nc'] = nc
         
         response['auth'] = auth
         
+        ## If we got a  user/response in auth, then log them
+        #
+        if 'user' in response.keys():
+            if 'resp' in response.keys():
+                session.try_auth('cram_md5', username=parsed['user'], digest=parsed['resp'])
+        
         # parsing out the via
         via = ''
         p = re.compile(".*^(Via:[^\n]+).*", re.MULTILINE|re.DOTALL);
         m = p.match(data)
-        if (m):
+        if m:
             via = m.group(1) + '\n'
         response['via'] = via
         
@@ -227,7 +223,7 @@ class Sip(HandlerBase, DatagramServer):
         contact = ''
         p = re.compile(".*^(Contact:[^\n]+).*", re.MULTILINE|re.DOTALL);
         m = p.match(data)
-        if (m):
+        if m:
             contact = m.group(1) + '\n'
         response['contact'] = contact
         
@@ -235,7 +231,7 @@ class Sip(HandlerBase, DatagramServer):
         expires = ''
         p = re.compile(".*^(Expires: [0-9]+).*", re.MULTILINE|re.DOTALL);
         m = p.match(data)
-        if (m):
+        if m:
             expires = m.group(1) + '\n'
         response['expires'] = expires
         
@@ -243,7 +239,7 @@ class Sip(HandlerBase, DatagramServer):
         ua = ''
         p = re.compile(".*^(User-Agent:[^\n]+).*", re.MULTILINE|re.DOTALL);
         m = p.match(data)
-        if (m):
+        if m:
             ua = m.group(1) + '\n'
         response['ua'] = ua
         
@@ -251,7 +247,7 @@ class Sip(HandlerBase, DatagramServer):
         allow = ''
         p = re.compile(".*^(Allow:[^\n]+).*", re.MULTILINE|re.DOTALL);
         m = p.match(data)
-        if (m):
+        if m:
             allow = m.group(1) + '\n'
         response['allow'] = allow
         
