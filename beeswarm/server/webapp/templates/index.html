@@ -1,18 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row-fluid">
+<div class="row">
     <ul class="thumbnails">
-        <li class="thumbnail span6 text-center">
+
+        <!-- TODO: These two lists should be side-by-side. -->
+        <li class="thumbnail text-center">
             <a class="btn-link" href="/ws/drones/honeypot">
                 <h1>{{ status.nhoneypots }}
                     <small>Honeypots</small>
                 </h1>
             </a>
             <hr>
-            <div class="row-fluid">
-                <h2 class="alert alert-error">{{ status.nattacks }}
-                    <small>Attacks Recorded</small>
-                </h2>
+            <div class="container">
+                <div class="row">
+                    <h2 class="alert alert-error alert-warning">{{ status.nattacks }}
+                        <small>Attacks Recorded</small>
+                    </h2>
+                </div>
             </div>
             <table class="table table-bordered">
                 <tr>
@@ -94,18 +98,23 @@
                     {% endif %}
                 </tr>
             </table>
+
         </li>
-        <li class="thumbnail span6 text-center pull-right">
+
+
+        <li class="thumbnail text-center">
             <a class="btn-link" href="/ws/drones/client">
                 <h1>{{ status.nclients }}
                     <small>Clients</small>
                 </h1>
             </a>
             <hr>
-            <div class="row-fluid">
-                <h2 class="alert alert-success">{{ status.bees.successful }}
-                    <small>Bait sessions successful</small>
-                </h2>
+            <div class="container">
+                <div class="row">
+                    <h2 class="alert alert-success">{{ status.bees.successful }}
+                        <small>Bait sessions successful</small>
+                    </h2>
+                </div>
             </div>
         </li>
     </ul>
