@@ -92,6 +92,7 @@ class BaitDispatcher(Greenlet):
 
     def _on_bait_session_ended(self, greenlet):
         self.bait_session_running = False
+
         if greenlet.exception is not None:
             logger.warning('Bait session of type {0} stopped with unhandled '
                            'error: {1}'.format(self.bait_type, greenlet.exception))
