@@ -50,6 +50,7 @@ class Pop3(ClientBase):
                 'Sending {0} bait session to {1}:{2}. (bait id: {3})'.format('pop3', server_host, server_port,
                                                                              session.id))
             conn = poplib.POP3(server_host, server_port)
+
             session.source_port = conn.sock.getsockname()[1]
 
             banner = conn.getwelcome()
@@ -77,3 +78,12 @@ class Pop3(ClientBase):
         finally:
             session.all_done = True
             session.end_session()
+            if conn:
+                try:
+                    conn.file.close()
+                except Exception:
+                    pass
+                try:
+                    conn.sock.close()
+                except Exception:
+                    pass

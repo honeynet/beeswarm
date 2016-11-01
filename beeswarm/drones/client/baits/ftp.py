@@ -110,6 +110,7 @@ class Ftp(ClientBase):
             session.did_complete = True
         finally:
             if self.client.sock is not None:
+                # will close socket
                 self.client.quit()
             session.alldone = True
         session.end_session()
