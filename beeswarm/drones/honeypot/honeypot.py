@@ -21,6 +21,7 @@ import _socket
 
 import ntplib
 
+import fs
 import gevent
 from gevent import Greenlet
 from gevent.server import StreamServer
@@ -50,6 +51,10 @@ class Honeypot(object):
         :param key: Key file used for SSL enabled capabilities
         :param cert: Cert file used for SSL enabled capabilities
         """
+
+        if fs.__version__ != '0.5.4':
+            os.exit('the python fs package must be verison 0.5.4')
+
         if config is None or not os.path.isdir(os.path.join(work_dir, 'data')):
             Honeypot.prepare_environment(work_dir)
 
