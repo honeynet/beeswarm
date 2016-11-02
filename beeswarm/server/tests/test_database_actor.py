@@ -40,7 +40,8 @@ from beeswarm.shared.helpers import send_zmq_request_socket
 class ClassifierTests(unittest.TestCase):
     def setUp(self):
         beeswarm.shared.zmq_context = zmq.Context()
-        self.db_file = tempfile.mkstemp()[1]
+        fd, self.db_file = tempfile.mkstemp()
+        os.close(fd)
         connection_string = 'sqlite:///{0}'.format(self.db_file)
         os.remove(self.db_file)
         database_setup.setup_db(connection_string)
@@ -133,7 +134,8 @@ class ClassifierTests(unittest.TestCase):
         drone_data_socket = beeswarm.shared.zmq_context.socket(zmq.PUB)
         drone_data_socket.bind(SocketNames.DRONE_DATA.value)
 
-        config_file = tempfile.mkstemp()[1]
+        fd, config_file = tempfile.mkstemp()
+        os.close(fd)
         os.remove(config_file)
         # persistence actor needs to communicate with on config REQ/REP socket
         config_actor = ConfigActor(config_file, '')

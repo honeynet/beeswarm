@@ -22,7 +22,8 @@ class WebAppTests(unittest.TestCase):
         app.app.config['WTF_CSRF_ENABLED'] = False
         self.work_dir = tempfile.mkdtemp()
         beeswarm.shared.zmq_context = zmq.Context()
-        self.db_file = tempfile.mkstemp()[1]
+        fd, self.db_file = tempfile.mkstemp()
+        os.close(fd)
         connection_string = 'sqlite:///{0}'.format(self.db_file)
         os.remove(self.db_file)
         database.setup_db(connection_string)
@@ -43,7 +44,9 @@ class WebAppTests(unittest.TestCase):
 
     def tearDown(self):
         self.database_actor.stop()
+        self.database_actor = None
         self.config_actor.stop()
+        self.config_actor = None
         shutil.rmtree(self.work_dir)
         if os.path.isfile(self.db_file):
             os.remove(self.db_file)
@@ -457,7 +460,6 @@ class WebAppTests(unittest.TestCase):
 
     def populate_sessions(self):
         """ Populates the database with 3 Sessions """
-
         db_session = database.get_session()
         for i in xrange(4):
             s = Session(

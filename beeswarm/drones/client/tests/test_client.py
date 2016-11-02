@@ -72,7 +72,3 @@ class ClientTests(unittest.TestCase):
         }
 
         client = Client(self.tmp_dir, config)
-
-
-
-
