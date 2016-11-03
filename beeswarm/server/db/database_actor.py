@@ -664,9 +664,9 @@ class DatabaseActor(gevent.Greenlet):
         db_session = database_setup.get_session()
         # the database_setup will not get hit until we start iterating the query object
         query_iterators = {
-            Messages.GET_SESSIONS_ALL.value: db_session.query(Session, Drone.name),
-            Messages.GET_SESSIONS_BAIT.value: db_session.query(BaitSession, Drone.name),
-            Messages.GET_SESSIONS_ATTACKS.value: db_session.query(Session, Drone.name).filter(
+            Messages.GET_SESSIONS_ALL.value: db_session.query(Session),
+            Messages.GET_SESSIONS_BAIT.value: db_session.query(BaitSession),
+            Messages.GET_SESSIONS_ATTACKS.value: db_session.query(Session).filter(
                 Session.classification_id != 'bait_session')
         }
 
@@ -676,11 +676,10 @@ class DatabaseActor(gevent.Greenlet):
 
         # select which iterator to use
         entries = query_iterators[_type].order_by(desc(Session.timestamp))
-
         rows = []
+
         for session in entries:
-            session[0].name = session[1]
-            rows.append(session[0].to_dict())
+            rows.append(session.to_dict())
 
         return rows
 

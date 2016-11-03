@@ -123,8 +123,11 @@ class Session(Base):
                   'honeypot_id': self.honeypot_id,
                   'classification': classification,
                   'id': self.id,
-                  'honeypot_name': self.name
+                  'honeypot_name': '',
                   }
+                  # drone can be None when unit testing
+        if self.drone:
+            result['honeypot_name'] = self.drone.name
 
         return result
 
