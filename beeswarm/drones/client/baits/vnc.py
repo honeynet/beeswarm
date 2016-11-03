@@ -88,3 +88,5 @@ class Vnc(ClientBase):
         finally:
             session.alldone = True
             session.end_session()
+            if client_socket:
+                client_socket.close()

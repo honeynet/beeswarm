@@ -19,6 +19,7 @@ import json
 from datetime import datetime
 
 import zmq.green as zmq
+from gevent.lock import BoundedSemaphore
 import beeswarm
 from beeswarm.shared.socket_enum import SocketNames
 from beeswarm.shared.message_enum import Messages
@@ -28,6 +29,10 @@ logger = logging.getLogger(__name__)
 
 
 class BaseSession(object):
+
+    socket = None
+    socketLock = BoundedSemaphore(1)
+
     def __init__(self, protocol, source_ip=None, source_port=None, destination_ip=None, destination_port=None):
         self.id = uuid.uuid4()
         self.source_ip = source_ip
@@ -40,10 +45,11 @@ class BaseSession(object):
         self.transcript = []
         self.session_ended = False
 
-
-        context = beeswarm.shared.zmq_context
-        self.socket = context.socket(zmq.PUSH)
-        self.socket.connect(SocketNames.SERVER_RELAY.value)
+        with BaseSession.socketLock:
+            if BaseSession.socket is None:
+                context = beeswarm.shared.zmq_context
+                BaseSession.socket = context.socket(zmq.PUSH)
+                BaseSession.socket.connect(SocketNames.SERVER_RELAY.value)
 
     def add_auth_attempt(self, auth_type, successful, **kwargs):
         """
@@ -81,10 +87,12 @@ class BaseSession(object):
     def transcript_outgoing(self, data):
         self._add_transcript('outgoing', data)
 
-    def send_log(self, type, in_data):
+    @classmethod
+    def send_log(cls, type, in_data):
         data = json.dumps(in_data, default=json_default, ensure_ascii=False)
         message = '{0} {1}'.format(type, data)
-        self.socket.send(message)
+        with cls.socketLock:
+            cls.socket.send(message)
 
     def to_dict(self):
         return vars(self)

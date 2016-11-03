@@ -118,6 +118,8 @@ class Telnet(ClientBase, Commands):
         finally:
             session.alldone = True
             session.end_session()
+            if self.client:
+                self.client.close()
 
     def connect(self):
         """

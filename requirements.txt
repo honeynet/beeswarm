@@ -1,7 +1,7 @@
 --allow-unverified pyDes
 --allow-external pyDes
 pyzmq>=14.3.0
-fs
+fs==0.5.4
 pycrypto>=2.6.0
 ecdsa
 cssselect

@@ -88,6 +88,7 @@ class Http(ClientBase):
         finally:
             session.alldone = True
             session.end_session()
+            self.client.close()
 
     def _make_url(self, server, path, port=80):
         if port == 80:

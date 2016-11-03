@@ -100,6 +100,7 @@ class Smtp(ClientBase):
             logger.debug('SMTP Session complete.')
             session.alldone = True
             session.end_session()
+            self.client.close()
 
     def get_one_mail(self):
         """

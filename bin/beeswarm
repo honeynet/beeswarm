@@ -167,9 +167,8 @@ if __name__ == '__main__':
             config = json.load(_file, object_hook=asciify)
             if 'general' in config:
                 mode = config['general']['mode']
-                if not mode:
+                if mode is not "server":
                     mode = 'drone'
-
     if args.server or mode == 'server':
         stop_if_root()
         server = Server(args.workdir, config, customize=args.customize, clear_db=args.clearsessions,
