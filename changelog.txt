@@ -1,3 +1,7 @@
+0.7.15:
+ - Fixed leaking file descriptors(#230)
+ - Various minor fixes and improvements.
+
 0.7.14:
  - Fixed bug that made it impossible to start Beeswarm under certain circumstances (#221).
  - Fixed bug that classified bait traffic wrongly when client message arrived before
