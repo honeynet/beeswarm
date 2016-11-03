@@ -1,3 +1,6 @@
+0.7.16:
+ - Fixed session query bug
+
 0.7.15:
  - Fixed leaking file descriptors(#230)
  - Various minor fixes and improvements.
