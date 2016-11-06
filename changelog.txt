@@ -1,3 +1,7 @@
+0.7.17:
+ - Rename in ui: "Honeypot name" -> "Drone name"
+ - Added functionality to ping all drones from UI
+
 0.7.16:
  - Fixed session query bug
 
