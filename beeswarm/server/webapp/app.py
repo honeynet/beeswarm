@@ -410,7 +410,6 @@ def drone_key(key):
         drone_config = send_database_request('{0}'.format(Messages.DRONE_ADD.value))
         return json.dumps(drone_config)
 
-
 @app.route('/ws/drone/delete', methods=['POST'])
 @login_required
 def delete_drones():
@@ -418,6 +417,13 @@ def delete_drones():
     drone_ids = json.loads(request.data)
     for drone_id in drone_ids:
         send_database_request('{0} {1}'.format(Messages.DRONE_DELETE.value, drone_id))
+    return ''
+
+# Send ping to all drones
+@app.route('/ws/drones/ping', methods=['GET'])
+@login_required
+def drones_ping():
+    send_database_request('{0}'.format(Messages.PING_ALL_DRONES.value))
     return ''
 
 

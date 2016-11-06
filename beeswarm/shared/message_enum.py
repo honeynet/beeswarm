@@ -39,7 +39,7 @@ class Messages(Enum):
     PING = 'PING'
     PONG = 'PING'
     IP = 'IP'
-    
+
     DRONE_WANT_CONFIG = 'DRONE_WANT_CONFIG'
     DRONE_CONFIG = 'DRONE_CONFIG'
     # ID USERNAME PASSWORD
@@ -73,3 +73,6 @@ class Messages(Enum):
     GET_DRONE_LIST = 'GET_DRONE_LIST'
     # Param: clientId config
     CONFIG_DRONE = 'CONFIG_DRONE'
+
+    # Param: clientId config
+    PING_ALL_DRONES = 'PING_ALL_DRONES'

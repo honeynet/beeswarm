@@ -144,6 +144,9 @@ class DatabaseActor(gevent.Greenlet):
                 elif cmd == Messages.GET_DRONE_LIST.value:
                     result = self._handle_command_get_drone_list(data)
                     self.databaseRequests.send('{0} {1}'.format(Messages.OK.value, json.dumps(result)))
+                elif cmd == Messages.PING_ALL_DRONES.value:
+                    self._handle_ping_all_drones()
+                    self.databaseRequests.send('{0} {1}'.format(Messages.OK.value, ' '))
                 else:
                     logger.error('Unknown message received: {0}'.format(data))
                     assert False
@@ -168,6 +171,7 @@ class DatabaseActor(gevent.Greenlet):
                     self.drone_command_receiver.send('{0} {1} {2}'.format(drone_id, Messages.CONFIG.value,
                                                                           json.dumps(config_dict)))
                 elif topic == Messages.PING.value:
+                    self._update_drone_last_activity(drone_id)
                     logger.debug('Received ping from {0}'.format(drone_id))
                 else:
                     logger.debug('This actor cannot process this message: {0}'.format(topic))
@@ -495,6 +499,14 @@ class DatabaseActor(gevent.Greenlet):
         config = self._get_drone_config(drone_id)
         logger.debug('Sending config to {0}: {1}'.format(drone_id, config))
         self.drone_command_receiver.send('{0} {1} {2}'.format(drone_id, Messages.CONFIG.value, json.dumps(config)))
+
+    def _handle_ping_all_drones(self):
+        db_session = database_setup.get_session()
+        drones = db_session.query(Drone)
+
+        for drone in drones:
+            logger.debug('Sending ping to {0}'.format(drone.id))
+            self.drone_command_receiver.send('{0} {1} {2}'.format(drone.id, Messages.PING.value, ''))
 
     def send_config_request(self, request):
         return send_zmq_request_socket(self.config_actor_socket, request)

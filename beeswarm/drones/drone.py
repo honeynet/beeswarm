@@ -205,7 +205,8 @@ class Drone(object):
                 elif command == Messages.DRONE_DELETE.value:
                     self._handle_delete()
                 else:
-                    self.internal_server_relay.send('{0} {1}'.format(command, data))
+                    # Messages we cannot handles goes back to server (and pings).
+                    send_zmq_push(SocketNames.SERVER_RELAY.value, '{0} {1}'.format(command, data))
             elif local_receiving_socket in socks and socks[local_receiving_socket] == zmq.POLLIN:
                 data = local_receiving_socket.recv()
                 outgoing_proxy.send('{0} {1}'.format(self.id, data))
