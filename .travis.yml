@@ -14,8 +14,9 @@ deploy:
   provider: pypi
   user: Johnny.Vestergaard
   password:
-    secure: PETOFOO0E3Xmvs1MOuL65hxuoc8kTH82P57x6tWAy/QVDYqQ7X4rHvffV3ZIygB55s9yHJGWHfe+zFy5kDX+4rr3b1y0NpH8Hk2yLpXtgqsuLEfP4hqwjE8RvSGw+koRAlIqSIAHcMtK3rdLRt3AcCsglQ26iP/pRpAggodFWR0=
+     secure: LLP/6dscaN6mI5wQYvuwhbOhpFrMtXa9eUz2HLSltFR+x5RN5agli0PFZaGJLRl+AneMbJy7+LwNSpNpiLX04ksAcl6ZO5boGQLeQbs5mQKURVlyLHL4848cp+Jy6K6xfFRePh6KBHslfEJU9YBWtzVCfrYEazYJMASLsQ8VL+zfJ8ZT8uzIzKe2EraN6nyqEpTZTCQMS3FCYPg6MGneHSm9AK5pXBjN1YuN3yggLVhYFJLtjqpwgLwj3xBQptdjZ4hGQ4ZS30ZpJVZ7IAM6uYXrTExWVbL+dIXlanzmUW2HaPyNKaosBwQkMxkouWaXylqzSZMklCZc1wXnBLs4BTYPVG4sbzer3kb8dPqnnCPkTrO2mTJtdmrwH9t1M5kGpx0U9x1s997CvvtwQJ2C8+cvy9W8+m5fzJIzUBrbUlMYzsb+N3qUjP+uzrUB1SFlJFSytFSHeJ6jQnpj3fFO99wyqlkO1ifE+kU9FXm1+Pb2g/EqRUfwrVQ/IdJYN2czq1li2E6meIanmAIWFsv91RdaAHgShyBU6q59b4LiBaAIrNmRZukehKu0Ub5xO5/1k6CY10dVlvjSAM0/0K8JKpIY2CSBfFxao4pi27qkHIe+78fZbF4l7DRIG5b3yxJcZnQizBQynzI7m8WKelQp8nHmtIWkv52ddjMznck6pAM=
   on:
+    tags: true
+    distributions: sdist bdist_wheel   
     repo: honeynet/beeswarm
-    all_branches: true
     condition: $TRAVIS_TAG =~ ^Release_[0-9]+[.][0-9]+[.][0-9]+
