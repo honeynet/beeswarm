@@ -14,7 +14,8 @@ deploy:
   provider: pypi
   user: Johnny.Vestergaard
   password:
-     secure: "Ibsqv94uYPdzjm4lz0czXEpxQLhpkLIgkIT9awfROWOChd6EXvOgfwLtgzq4KRvQHcR6mVdgIzWoVRaw6b0+iBUomCyzo7ZrbhB37NlH5Kv4ZaNOkF5cwVFbHLwqOY6C8D4WD7+lDolPj3RYShlbIasZ0rLmO6ReWdYnKcV9VMQ="
+    secure: "Ibsqv94uYPdzjm4lz0czXEpxQLhpkLIgkIT9awfROWOChd6EXvOgfwLtgzq4KRvQHcR6mVdgIzWoVRaw6b0+iBUomCyzo7ZrbhB37NlH5Kv4ZaNOkF5cwVFbHLwqOY6C8D4WD7+lDolPj3RYShlbIasZ0rLmO6ReWdYnKcV9VMQ="
+  on:
     tags: true
     distributions: sdist bdist_wheel
     repo: honeynet/beeswarm
