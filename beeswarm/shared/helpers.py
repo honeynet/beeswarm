@@ -121,6 +121,8 @@ def get_most_likely_ip():
                     # well, actually the interface could have more IP's... But for now we assume that the IP
                     # we want is the first in the list on the IF.
 
+    default_ip = '127.0.0.1'
+    logger.warning('Count not detect likely IP, returning {0}'.format(default_ip))
     return '127.0.0.1'
 
 
