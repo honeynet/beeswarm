@@ -33,6 +33,8 @@ from beeswarm.server.db.entities import BaitSession, Session, Client, Authentica
 from beeswarm.shared.helpers import send_zmq_request_socket, generate_cert_digest
 from beeswarm.shared.message_enum import Messages
 from beeswarm.shared.socket_enum import SocketNames
+from beeswarm.shared.misc.time import isoformatToDatetime
+
 
 
 logger = logging.getLogger(__name__)
@@ -256,7 +258,7 @@ class DatabaseActor(gevent.Greenlet):
         if session_type == Messages.SESSION_HONEYPOT.value:
             session = Session()
             for entry in data['transcript']:
-                transcript_timestamp = datetime.strptime(entry['timestamp'], '%Y-%m-%dT%H:%M:%S.%f')
+                transcript_timestamp = isoformatToDatetime(entry['timestamp'])
                 transcript = Transcript(timestamp=transcript_timestamp, direction=entry['direction'],
                                         data=entry['data'])
                 session.transcript.append(transcript)
@@ -285,7 +287,7 @@ class DatabaseActor(gevent.Greenlet):
             return
         session.id = data['id']
         session.classification = classification
-        session.timestamp = datetime.strptime(data['timestamp'], '%Y-%m-%dT%H:%M:%S.%f')
+        session.timestamp = isoformatToDatetime(data['timestamp'])
         session.received = datetime.utcnow()
         session.protocol = data['protocol']
         session.destination_ip = data['destination_ip']
@@ -313,7 +315,7 @@ class DatabaseActor(gevent.Greenlet):
         password = auth_data.get('password', '')
         authentication = Authentication(id=auth_data['id'], username=username, password=password,
                                         successful=auth_data['successful'],
-                                        timestamp=datetime.strptime(auth_data['timestamp'], '%Y-%m-%dT%H:%M:%S.%f'))
+                                        timestamp=isoformatToDatetime(auth_data['timestamp']))
         return authentication
 
     def get_matching_session(self, session, db_session, timediff=5):
