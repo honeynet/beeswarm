@@ -36,11 +36,11 @@ from beeswarm.shared.socket_enum import SocketNames
 from beeswarm.shared.misc.time import isoformatToDatetime
 
 
-
 logger = logging.getLogger(__name__)
 
 
 class DatabaseActor(gevent.Greenlet):
+
     def __init__(self, max_sessions, clear_sessions=False, delay_seconds=30):
         assert delay_seconds > 1
         Greenlet.__init__(self)
@@ -50,11 +50,13 @@ class DatabaseActor(gevent.Greenlet):
         # with this period
         self.delay_seconds = delay_seconds
         # clear all pending sessions on startup, pending sessions on startup
-        pending_classification = db_session.query(Classification).filter(Classification.type == 'pending').one()
+        pending_classification = db_session.query(Classification).filter(
+            Classification.type == 'pending').one()
         pending_deleted = db_session.query(Session).filter(
             Session.classification == pending_classification).delete()
         db_session.commit()
-        logging.info('Cleaned {0} pending sessions on startup'.format(pending_deleted))
+        logging.info(
+            'Cleaned {0} pending sessions on startup'.format(pending_deleted))
         self.do_classify = False
         self.do_maintenance = False
         if clear_sessions or max_sessions == 0:
@@ -65,7 +67,8 @@ class DatabaseActor(gevent.Greenlet):
 
         self.max_session_count = max_sessions
         if max_sessions:
-            logger.info('Database has been limited to contain {0} sessions.'.format(max_sessions))
+            logger.info(
+                'Database has been limited to contain {0} sessions.'.format(max_sessions))
 
         context = beeswarm.shared.zmq_context
 
@@ -84,7 +87,8 @@ class DatabaseActor(gevent.Greenlet):
         # requests that this actor needs to respond to
         self.databaseRequests.bind(SocketNames.DATABASE_REQUESTS.value)
         # will publish session after they have been processed on this socket
-        self.processedSessionsPublisher.bind(SocketNames.PROCESSED_SESSIONS.value)
+        self.processedSessionsPublisher.bind(
+            SocketNames.PROCESSED_SESSIONS.value)
         # needed to be able to probe for options and get zmq keys
         self.config_actor_socket.connect(SocketNames.CONFIG_COMMANDS.value)
         # needed to send data directly to drones
@@ -114,41 +118,51 @@ class DatabaseActor(gevent.Greenlet):
                     self._handle_command_get_droneconfig(data)
                 elif cmd == Messages.BAIT_USER_ADD.value:
                     self._handle_command_bait_user_add(data)
-                    self.databaseRequests.send('{0} {1}'.format(Messages.OK.value, '{}'))
+                    self.databaseRequests.send(
+                        '{0} {1}'.format(Messages.OK.value, '{}'))
                 elif cmd == Messages.BAIT_USER_DELETE.value:
                     self._handle_command_bait_user_delete(data)
-                    self.databaseRequests.send('{0} {1}'.format(Messages.OK.value, '{}'))
+                    self.databaseRequests.send(
+                        '{0} {1}'.format(Messages.OK.value, '{}'))
                 elif cmd == Messages.DRONE_DELETE.value:
                     self._handle_command_delete_drone(data)
-                    self.databaseRequests.send('{0} {1}'.format(Messages.OK.value, '{}'))
+                    self.databaseRequests.send(
+                        '{0} {1}'.format(Messages.OK.value, '{}'))
                 elif cmd == Messages.DRONE_ADD.value:
                     self._handle_command_add_drone()
                 elif cmd == Messages.GET_DB_STATS.value:
                     result = self._handle_command_get_db_stats()
-                    self.databaseRequests.send('{0} {1}'.format(Messages.OK.value, json.dumps(result)))
+                    self.databaseRequests.send('{0} {1}'.format(
+                        Messages.OK.value, json.dumps(result)))
                 elif cmd == Messages.GET_SESSIONS_ALL.value or cmd == Messages.GET_SESSIONS_ATTACKS.value \
                         or cmd == Messages.GET_SESSIONS_BAIT.value:
                     # TODO: Accept to/from param to facilitate pagination
                     result = self._handle_command_get_sessions(cmd)
-                    self.databaseRequests.send('{0} {1}'.format(Messages.OK.value, json.dumps(result)))
+                    self.databaseRequests.send('{0} {1}'.format(
+                        Messages.OK.value, json.dumps(result)))
                 elif cmd == Messages.GET_SESSION_CREDENTIALS.value:
                     result = self._handle_command_get_credentials(data)
-                    self.databaseRequests.send('{0} {1}'.format(Messages.OK.value, json.dumps(result)))
+                    self.databaseRequests.send('{0} {1}'.format(
+                        Messages.OK.value, json.dumps(result)))
                 elif cmd == Messages.GET_SESSION_TRANSCRIPT.value:
                     result = self._handle_command_get_transcript(data)
-                    self.databaseRequests.send('{0} {1}'.format(Messages.OK.value, json.dumps(result)))
+                    self.databaseRequests.send('{0} {1}'.format(
+                        Messages.OK.value, json.dumps(result)))
                 elif cmd == Messages.GET_BAIT_USERS.value:
                     result = self._handle_command_get_bait_users()
-                    self.databaseRequests.send('{0} {1}'.format(Messages.OK.value, json.dumps(result)))
+                    self.databaseRequests.send('{0} {1}'.format(
+                        Messages.OK.value, json.dumps(result)))
                 elif cmd == Messages.CONFIG_DRONE.value:
                     # .send on socket is handled internally since it can send errors back
                     self._handle_command_config_drone(data)
                 elif cmd == Messages.GET_DRONE_LIST.value:
                     result = self._handle_command_get_drone_list(data)
-                    self.databaseRequests.send('{0} {1}'.format(Messages.OK.value, json.dumps(result)))
+                    self.databaseRequests.send('{0} {1}'.format(
+                        Messages.OK.value, json.dumps(result)))
                 elif cmd == Messages.PING_ALL_DRONES.value:
                     self._handle_ping_all_drones()
-                    self.databaseRequests.send('{0} {1}'.format(Messages.OK.value, ' '))
+                    self.databaseRequests.send(
+                        '{0} {1}'.format(Messages.OK.value, ' '))
                 else:
                     logger.error('Unknown message received: {0}'.format(data))
                     assert False
@@ -176,7 +190,8 @@ class DatabaseActor(gevent.Greenlet):
                     self._update_drone_last_activity(drone_id)
                     logger.debug('Received ping from {0}'.format(drone_id))
                 else:
-                    logger.debug('This actor cannot process this message: {0}'.format(topic))
+                    logger.debug(
+                        'This actor cannot process this message: {0}'.format(topic))
 
     def stop(self):
         self.enabled = False
@@ -194,7 +209,8 @@ class DatabaseActor(gevent.Greenlet):
             db_session.add(drone)
             db_session.commit()
         else:
-            logger.warning('Trying to update last activity non-exting drone with id {0}'.format(drone_id))
+            logger.warning(
+                'Trying to update last activity non-exting drone with id {0}'.format(drone_id))
 
     def _start_recurring_maintenance_set(self):
         while self.enabled:
@@ -210,7 +226,8 @@ class DatabaseActor(gevent.Greenlet):
 
     def _handle_message_ip(self, topic, drone_id, data):
         ip_address = data
-        logging.debug('Drone {0} reported ip: {1}'.format(drone_id, ip_address))
+        logging.debug('Drone {0} reported ip: {1}'.format(
+            drone_id, ip_address))
         db_session = database_setup.get_session()
         drone = db_session.query(Drone).filter(Drone.id == drone_id).one()
         if drone:
@@ -219,7 +236,8 @@ class DatabaseActor(gevent.Greenlet):
                 db_session.add(drone)
                 db_session.commit()
         else:
-            logger.warning('Trying to update IP on non-exting drone with id {0}'.format(drone_id))
+            logger.warning(
+                'Trying to update IP on non-exting drone with id {0}'.format(drone_id))
 
     def _handle_cert_message(self, topic, drone_id, data):
         # for now we just store the fingerprint
@@ -227,7 +245,8 @@ class DatabaseActor(gevent.Greenlet):
         # for forensic purposes
         cert = data.split(' ', 1)[1]
         digest = generate_cert_digest(cert)
-        logging.debug('Storing public key digest: {0} for drone {1}.'.format(digest, drone_id))
+        logging.debug(
+            'Storing public key digest: {0} for drone {1}.'.format(digest, drone_id))
         db_session = database_setup.get_session()
         drone = db_session.query(Drone).filter(Drone.id == drone_id).one()
         if drone:
@@ -235,7 +254,8 @@ class DatabaseActor(gevent.Greenlet):
             db_session.add(drone)
             db_session.commit()
         else:
-            logger.warning('Trying to update cert on non-exting drone with id {0}'.format(drone_id))
+            logger.warning(
+                'Trying to update cert on non-exting drone with id {0}'.format(drone_id))
 
     def persist_session(self, session_type, session_json):
         db_session = database_setup.get_session()
@@ -243,7 +263,8 @@ class DatabaseActor(gevent.Greenlet):
         if self.max_session_count == 0:
             return
         elif db_session.query(Session).count() == self.max_session_count:
-            session_to_delete = db_session.query(Session, func.min(Session.timestamp)).first()[0]
+            session_to_delete = db_session.query(
+                Session, func.min(Session.timestamp)).first()[0]
             db_session.delete(session_to_delete)
         try:
             data = json.loads(session_json)
@@ -251,10 +272,12 @@ class DatabaseActor(gevent.Greenlet):
             data = json.loads(unicode(session_json, "ISO-8859-1"))
         logger.debug('Persisting {0} session: {1}'.format(session_type, data))
 
-        classification = db_session.query(Classification).filter(Classification.type == 'pending').one()
+        classification = db_session.query(Classification).filter(
+            Classification.type == 'pending').one()
 
         assert data['honeypot_id'] is not None
-        _honeypot = db_session.query(Honeypot).filter(Honeypot.id == data['honeypot_id']).one()
+        _honeypot = db_session.query(Honeypot).filter(
+            Honeypot.id == data['honeypot_id']).one()
         if session_type == Messages.SESSION_HONEYPOT.value:
             session = Session()
             for entry in data['transcript']:
@@ -273,7 +296,8 @@ class DatabaseActor(gevent.Greenlet):
                 logger.debug('Ignore failed bait session.')
                 return
             session = BaitSession()
-            client = db_session.query(Client).filter(Client.id == data['client_id']).one()
+            client = db_session.query(Client).filter(
+                Client.id == data['client_id']).one()
             client.last_activity = datetime.now()
             session.did_connect = data['did_connect']
             session.did_login = data['did_login']
@@ -295,18 +319,21 @@ class DatabaseActor(gevent.Greenlet):
         session.source_ip = data['source_ip']
         session.source_port = data['source_port']
         session.honeypot = _honeypot
-        _dronename = db_session.query(Drone).filter(Drone.id==_honeypot.id).first().name
+        _dronename = db_session.query(Drone).filter(
+            Drone.id == _honeypot.id).first().name
         db_session.add(session)
         db_session.commit()
         matching_session = self.get_matching_session(session, db_session)
         if session_type == Messages.SESSION_HONEYPOT.value:
             if matching_session:
                 matching_session.name = _dronename
-                self.merge_bait_and_session(session, matching_session, db_session)
+                self.merge_bait_and_session(
+                    session, matching_session, db_session)
         elif session_type == Messages.SESSION_CLIENT.value:
             if matching_session:
                 session.name = _dronename
-                self.merge_bait_and_session(matching_session, session, db_session)
+                self.merge_bait_and_session(
+                    matching_session, session, db_session)
         else:
             assert False
 
@@ -331,7 +358,8 @@ class DatabaseActor(gevent.Greenlet):
         max_datetime = session.timestamp + timedelta(seconds=timediff)
         # default return value
         match = None
-        classification = db_session.query(Classification).filter(Classification.type == 'pending').one()
+        classification = db_session.query(Classification).filter(
+            Classification.type == 'pending').one()
         # get all sessions that match basic properties.
         sessions = db_session.query(Session).options(joinedload(Session.authentication)) \
             .filter(Session.protocol == session.protocol) \
@@ -350,8 +378,8 @@ class DatabaseActor(gevent.Greenlet):
             for honey_auth in session.authentication:
                 for session_auth in potential_match.authentication:
                     if session_auth.username == honey_auth.username and \
-                                    session_auth.password == honey_auth.password and \
-                                    session_auth.successful == honey_auth.successful:
+                            session_auth.password == honey_auth.password and \
+                            session_auth.successful == honey_auth.successful:
                         assert potential_match.id != session.id
                         match = potential_match
                         break
@@ -387,18 +415,22 @@ class DatabaseActor(gevent.Greenlet):
 
         db_session = database_setup.get_session()
 
-        # find and process bait sessions that did not get classified during persistence.
+        # find and process bait sessions that did not get classified during
+        # persistence.
         bait_sessions = db_session.query(BaitSession).options(joinedload(BaitSession.authentication)) \
             .filter(BaitSession.classification_id == 'pending') \
             .filter(BaitSession.did_complete == True) \
             .filter(BaitSession.received < min_datetime).all()
 
         for bait_session in bait_sessions:
-            logger.debug('Classifying bait session with id {0} as MITM'.format(bait_session.id))
-            bait_session.classification = db_session.query(Classification).filter(Classification.type == 'mitm').one()
+            logger.debug(
+                'Classifying bait session with id {0} as MITM'.format(bait_session.id))
+            bait_session.classification = db_session.query(
+                Classification).filter(Classification.type == 'mitm').one()
             db_session.commit()
 
-        # find and process honeypot sessions that did not get classified during persistence.
+        # find and process honeypot sessions that did not get classified during
+        # persistence.
         sessions = db_session.query(Session, Drone.name).filter(Session.discriminator == None) \
             .filter(Session.timestamp <= min_datetime) \
             .filter(Session.classification_id == 'pending') \
@@ -420,11 +452,14 @@ class DatabaseActor(gevent.Greenlet):
                 session.classification = db_session.query(Classification).filter(
                     Classification.type == 'credentials_reuse').one()
             elif len(session.authentication) == 0:
-                logger.debug('Classifying session with id {0} as probe.'.format(session.id))
-                session.classification = db_session.query(Classification).filter(Classification.type == 'probe').one()
+                logger.debug(
+                    'Classifying session with id {0} as probe.'.format(session.id))
+                session.classification = db_session.query(
+                    Classification).filter(Classification.type == 'probe').one()
             else:
                 # we have never transmitted this username/password combo
-                logger.debug('Classifying session with id {0} as bruteforce attempt.'.format(session.id))
+                logger.debug(
+                    'Classifying session with id {0} as bruteforce attempt.'.format(session.id))
                 session.classification = db_session.query(Classification).filter(
                     Classification.type == 'bruteforce').one()
             db_session.commit()
@@ -436,13 +471,16 @@ class DatabaseActor(gevent.Greenlet):
         drone_id = data
         logger.debug('Deleting drone: {0}'.format(drone_id))
         db_session = database_setup.get_session()
-        drone_to_delete = db_session.query(Drone).filter(Drone.id == drone_id).first()
+        drone_to_delete = db_session.query(
+            Drone).filter(Drone.id == drone_id).first()
         if drone_to_delete:
             db_session.delete(drone_to_delete)
             db_session.commit()
             # tell the drone to kill itself
-            self.drone_command_receiver.send('{0} {1} '.format(drone_id, Messages.DRONE_DELETE.value))
-            self.send_config_request('{0} {1}'.format(Messages.DELETE_ZMQ_KEYS.value, drone_id))
+            self.drone_command_receiver.send(
+                '{0} {1} '.format(drone_id, Messages.DRONE_DELETE.value))
+            self.send_config_request('{0} {1}'.format(
+                Messages.DELETE_ZMQ_KEYS.value, drone_id))
             self._reconfigure_all_clients()
 
     def _handle_command_add_drone(self):
@@ -453,7 +491,8 @@ class DatabaseActor(gevent.Greenlet):
         logger.debug('New drone has been added with id: {0}'.format(drone.id))
 
         drone_config = self._get_drone_config(drone.id)
-        self.databaseRequests.send('{0} {1}'.format(Messages.OK.value, json.dumps(drone_config)))
+        self.databaseRequests.send('{0} {1}'.format(
+            Messages.OK.value, json.dumps(drone_config)))
 
     def _reconfigure_all_clients(self):
         db_session = database_setup.get_session()
@@ -466,15 +505,20 @@ class DatabaseActor(gevent.Greenlet):
         for honeypot in honeypots:
             for capability in honeypot.capabilities:
                 for client in clients:
-                    # following three variables should be make somewhat user configurable again
+                    # following three variables should be make somewhat user
+                    # configurable again
                     client_timings = json.loads(client.bait_timings)
                     if capability.protocol in client_timings:
                         # the time range in which to activate the bait sessions
-                        activation_range = client_timings[capability.protocol]['active_range']
+                        activation_range = client_timings[
+                            capability.protocol]['active_range']
                         # period to sleep before using activation_probability
-                        sleep_interval = client_timings[capability.protocol]['sleep_interval']
-                        # the probability that a bait session will be activated, 1 is always activate
-                        activation_probability = client_timings[capability.protocol]['activation_probability']
+                        sleep_interval = client_timings[
+                            capability.protocol]['sleep_interval']
+                        # the probability that a bait session will be
+                        # activated, 1 is always activate
+                        activation_probability = client_timings[
+                            capability.protocol]['activation_probability']
                     else:
                         logger.warning('Bait timings for {0} not found on client drone {1}({2}), using defaults instead'
                                        .format(capability.protocol, client.name, client.id))
@@ -493,14 +537,17 @@ class DatabaseActor(gevent.Greenlet):
     def _handle_command_get_droneconfig(self, drone_id):
         result = self._get_drone_config(drone_id)
         if len(result) == 0:
-            self.databaseRequests.send('{0} {1}'.format(Messages.FAIL.value, 'Drone could not be found'))
+            self.databaseRequests.send('{0} {1}'.format(
+                Messages.FAIL.value, 'Drone could not be found'))
         else:
-            self.databaseRequests.send('{0} {1}'.format(Messages.OK.value, json.dumps(result)))
+            self.databaseRequests.send('{0} {1}'.format(
+                Messages.OK.value, json.dumps(result)))
 
     def _send_config_to_drone(self, drone_id):
         config = self._get_drone_config(drone_id)
         logger.debug('Sending config to {0}: {1}'.format(drone_id, config))
-        self.drone_command_receiver.send('{0} {1} {2}'.format(drone_id, Messages.CONFIG.value, json.dumps(config)))
+        self.drone_command_receiver.send('{0} {1} {2}'.format(
+            drone_id, Messages.CONFIG.value, json.dumps(config)))
 
     def _handle_ping_all_drones(self):
         db_session = database_setup.get_session()
@@ -508,20 +555,23 @@ class DatabaseActor(gevent.Greenlet):
 
         for drone in drones:
             logger.debug('Sending ping to {0}'.format(drone.id))
-            self.drone_command_receiver.send('{0} {1} {2}'.format(drone.id, Messages.PING.value, ''))
+            self.drone_command_receiver.send(
+                '{0} {1} {2}'.format(drone.id, Messages.PING.value, ''))
 
     def send_config_request(self, request):
         return send_zmq_request_socket(self.config_actor_socket, request)
 
     def _handle_command_drone_config_changed(self, drone_id):
         self._send_config_to_drone(drone_id)
-        # TODO: Only Clients that communicate with this drone_id needs to get reconfigured.
+        # TODO: Only Clients that communicate with this drone_id needs to get
+        # reconfigured.
         self._reconfigure_all_clients()
 
     def _handle_command_bait_user_delete(self, data):
         bait_user_id = int(data)
         db_session = database_setup.get_session()
-        bait_user = db_session.query(BaitUser).filter(BaitUser.id == bait_user_id).first()
+        bait_user = db_session.query(BaitUser).filter(
+            BaitUser.id == bait_user_id).first()
         if bait_user:
             db_session.delete(bait_user)
             db_session.commit()
@@ -533,7 +583,8 @@ class DatabaseActor(gevent.Greenlet):
             if drone_edge:
                 self._reconfigure_all_clients()
         else:
-            logger.warning('Tried to delete non-existing bait user with id {0}.'.format(bait_user_id))
+            logger.warning(
+                'Tried to delete non-existing bait user with id {0}.'.format(bait_user_id))
 
     def _handle_command_bait_user_add(self, data):
         username, password = data.split(' ')
@@ -550,7 +601,8 @@ class DatabaseActor(gevent.Greenlet):
         bait_users = db_session.query(BaitUser)
         return_rows = []
         for bait_user in bait_users:
-            row = {'id': bait_user.id, 'username': bait_user.username, 'password': bait_user.password}
+            row = {'id': bait_user.id, 'username': bait_user.username,
+                   'password': bait_user.password}
             return_rows.append(row)
         return return_rows
 
@@ -559,23 +611,29 @@ class DatabaseActor(gevent.Greenlet):
         drone = db_session.query(Honeypot).filter(Drone.id == drone_id).first()
         # lame! what is the correct way?
         if not drone:
-            drone = db_session.query(Client).filter(Drone.id == drone_id).first()
+            drone = db_session.query(Client).filter(
+                Drone.id == drone_id).first()
         if not drone:
-            drone = db_session.query(Drone).filter(Drone.id == drone_id).first()
+            drone = db_session.query(Drone).filter(
+                Drone.id == drone_id).first()
         if not drone:
             # drone not found
             return {}
 
-        host = self.send_config_request('{0} {1}'.format(Messages.GET_CONFIG_ITEM.value, 'network,server_host'))
-        zmq_port = self.send_config_request('{0} {1}'.format(Messages.GET_CONFIG_ITEM.value, 'network,zmq_port'))
+        host = self.send_config_request('{0} {1}'.format(
+            Messages.GET_CONFIG_ITEM.value, 'network,server_host'))
+        zmq_port = self.send_config_request('{0} {1}'.format(
+            Messages.GET_CONFIG_ITEM.value, 'network,zmq_port'))
         zmq_command_port = self.send_config_request(
             '{0} {1}'.format(Messages.GET_CONFIG_ITEM.value, 'network,zmq_command_port'))
 
         server_zmq_url = 'tcp://{0}:{1}'.format(host, zmq_port)
         server_zmq_command_url = 'tcp://{0}:{1}'.format(host, zmq_command_port)
 
-        zmq_keys = self.send_config_request('{0} {1}'.format(Messages.GET_ZMQ_KEYS.value, drone_id))
-        zmq_server_key = self.send_config_request('{0} {1}'.format(Messages.GET_ZMQ_KEYS.value, 'beeswarm_server'))
+        zmq_keys = self.send_config_request(
+            '{0} {1}'.format(Messages.GET_ZMQ_KEYS.value, drone_id))
+        zmq_server_key = self.send_config_request(
+            '{0} {1}'.format(Messages.GET_ZMQ_KEYS.value, 'beeswarm_server'))
         zmq_server_key = zmq_server_key['public_key']
         # common section that goes for all types of drones
         drone_config = {
@@ -631,8 +689,10 @@ class DatabaseActor(gevent.Greenlet):
                          'activation_probability': bait.activation_probability}
                 if bait.capability.honeypot_id not in drone_config['baits']:
                     drone_config['baits'][bait.capability.honeypot_id] = {}
-                assert bait.capability.protocol not in drone_config['baits'][bait.capability.honeypot_id]
-                drone_config['baits'][bait.capability.honeypot_id][bait.capability.protocol] = _bait
+                assert bait.capability.protocol not in drone_config[
+                    'baits'][bait.capability.honeypot_id]
+                drone_config['baits'][bait.capability.honeypot_id][
+                    bait.capability.protocol] = _bait
             if drone.bait_timings:
                 drone_config['bait_timings'] = json.loads(drone.bait_timings)
             else:
@@ -648,8 +708,8 @@ class DatabaseActor(gevent.Greenlet):
             'count_sessions': db_session.query(Session).count(),
             'count_all_baits': db_session.query(BaitSession).count(),
             'count_all_attacks': db_session.query(Session).filter(Session.classification_id != 'bait_session')
-                .filter(Session.classification_id != 'pending')
-                .filter(Session.classification_id is not None).count(),
+            .filter(Session.classification_id != 'pending')
+            .filter(Session.classification_id is not None).count(),
             'count_attack_type': {
                 'http': self._get_num_attacks('http', db_session),
                 'vnc': self._get_num_attacks('vnc', db_session),
@@ -676,7 +736,8 @@ class DatabaseActor(gevent.Greenlet):
 
     def _handle_command_get_sessions(self, _type):
         db_session = database_setup.get_session()
-        # the database_setup will not get hit until we start iterating the query object
+        # the database_setup will not get hit until we start iterating the
+        # query object
         query_iterators = {
             Messages.GET_SESSIONS_ALL.value: db_session.query(Session),
             Messages.GET_SESSIONS_BAIT.value: db_session.query(BaitSession),
@@ -685,7 +746,8 @@ class DatabaseActor(gevent.Greenlet):
         }
 
         if _type not in query_iterators:
-            logger.warning('Query for sessions with unknown type: {0}'.format(_type))
+            logger.warning(
+                'Query for sessions with unknown type: {0}'.format(_type))
             return []
 
         # select which iterator to use
@@ -700,7 +762,8 @@ class DatabaseActor(gevent.Greenlet):
     def _handle_command_get_credentials(self, session_id):
         db_session = database_setup.get_session()
 
-        credentials = db_session.query(Authentication).filter(Authentication.session_id == session_id)
+        credentials = db_session.query(Authentication).filter(
+            Authentication.session_id == session_id)
         return_rows = []
         for credential in credentials:
             return_rows.append(credential.to_dict())
@@ -709,7 +772,8 @@ class DatabaseActor(gevent.Greenlet):
     def _handle_command_get_transcript(self, session_id):
         db_session = database_setup.get_session()
 
-        transcripts = db_session.query(Transcript).filter(Transcript.session_id == session_id)
+        transcripts = db_session.query(Transcript).filter(
+            Transcript.session_id == session_id)
         return_rows = []
         for transcript in transcripts:
             row = {'time': transcript.timestamp.strftime('%Y-%m-%d %H:%M:%S'), 'direction': transcript.direction,
@@ -722,9 +786,11 @@ class DatabaseActor(gevent.Greenlet):
         if drone_type == 'all':
             drones = db_session.query(Drone).all()
         elif drone_type == 'unassigned':
-            drones = db_session.query(Drone).filter(Drone.discriminator == None)
+            drones = db_session.query(Drone).filter(
+                Drone.discriminator == None)
         else:
-            drones = db_session.query(Drone).filter(Drone.discriminator == drone_type)
+            drones = db_session.query(Drone).filter(
+                Drone.discriminator == drone_type)
 
         drone_list = []
         for drone in drones:
@@ -750,7 +816,8 @@ class DatabaseActor(gevent.Greenlet):
             self.databaseRequests.send('{0} {1}'.format(Messages.OK.value, {}))
 
         else:
-            logger.error('Could not detect mode for drone config, drone id: {0}'.format(drone_id))
+            logger.error(
+                'Could not detect mode for drone config, drone id: {0}'.format(drone_id))
             self.databaseRequests.send('{0} {1}'.format(Messages.FAIL.value, 'Malformed data in drone config data.'
                                                                              'Drone id: {0}'.format(drone_id)))
 
@@ -775,16 +842,19 @@ class DatabaseActor(gevent.Greenlet):
         drone.cert_state = config['certificate']['state']
         drone.cert_locality = config['certificate']['locality']
         drone.cert_organization = config['certificate']['organization']
-        drone.cert_organization_unit = config['certificate']['organization_unit']
+        drone.cert_organization_unit = config[
+            'certificate']['organization_unit']
 
         # add capabilities
         drone.capabilities = []
         for protocol_name, protocol_config in config['capabilities'].items():
             if 'protocol_specific_data' in protocol_config:
-                protocol_specific_data = protocol_config['protocol_specific_data']
+                protocol_specific_data = protocol_config[
+                    'protocol_specific_data']
             else:
                 protocol_specific_data = {}
-            drone.add_capability(protocol_name, protocol_config['port'], protocol_specific_data)
+            drone.add_capability(protocol_name, protocol_config[
+                                 'port'], protocol_specific_data)
 
         db_session.add(drone)
         db_session.commit()
@@ -793,7 +863,8 @@ class DatabaseActor(gevent.Greenlet):
     def _config_client(self, drone, db_session, config):
         if drone.discriminator != 'client':
             # meh, better way do do this?
-            # TODO: this cascade delete sessions, find a way to maintain sessions for deleted drones.
+            # TODO: this cascade delete sessions, find a way to maintain
+            # sessions for deleted drones.
             ip_address = drone.ip_address
             drone_id = drone.id
             db_session.delete(drone)
