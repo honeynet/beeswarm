@@ -203,7 +203,7 @@ class DatabaseActor(gevent.Greenlet):
 
     def _update_drone_last_activity(self, drone_id):
         db_session = database_setup.get_session()
-        drone = db_session.query(Drone).filter(Drone.id == drone_id).one()
+        drone = db_session.query(Drone).filter(Drone.id == drone_id).one_or_none()
         if drone:
             drone.last_activity = datetime.now()
             db_session.add(drone)
@@ -229,7 +229,7 @@ class DatabaseActor(gevent.Greenlet):
         logging.debug('Drone {0} reported ip: {1}'.format(
             drone_id, ip_address))
         db_session = database_setup.get_session()
-        drone = db_session.query(Drone).filter(Drone.id == drone_id).one()
+        drone = db_session.query(Drone).filter(Drone.id == drone_id).one_or_none()
         if drone:
             if drone.ip_address != ip_address:
                 drone.ip_address = ip_address
@@ -248,7 +248,7 @@ class DatabaseActor(gevent.Greenlet):
         logging.debug(
             'Storing public key digest: {0} for drone {1}.'.format(digest, drone_id))
         db_session = database_setup.get_session()
-        drone = db_session.query(Drone).filter(Drone.id == drone_id).one()
+        drone = db_session.query(Drone).filter(Drone.id == drone_id).one_or_none()
         if drone:
             drone.cert_digest = digest
             db_session.add(drone)
@@ -277,7 +277,10 @@ class DatabaseActor(gevent.Greenlet):
 
         assert data['honeypot_id'] is not None
         _honeypot = db_session.query(Honeypot).filter(
-            Honeypot.id == data['honeypot_id']).one()
+            Honeypot.id == data['honeypot_id']).one_or_none()
+        if not _honeypot:
+            logger.warning('Trying to persist session for non-existing honeypot drone with id {0}'.format(data['honeypot_id']))
+            return
         if session_type == Messages.SESSION_HONEYPOT.value:
             session = Session()
             for entry in data['transcript']:
@@ -297,7 +300,10 @@ class DatabaseActor(gevent.Greenlet):
                 return
             session = BaitSession()
             client = db_session.query(Client).filter(
-                Client.id == data['client_id']).one()
+                Client.id == data['client_id']).one_or_none()
+            if not client:
+                logger.warning('Trying to persist session for non-existing client drone with id {0}'.format(data['client_id']))
+                return
             client.last_activity = datetime.now()
             session.did_connect = data['did_connect']
             session.did_login = data['did_login']
@@ -802,7 +808,7 @@ class DatabaseActor(gevent.Greenlet):
         config = json.loads(config)
 
         db_session = database_setup.get_session()
-        drone = db_session.query(Drone).filter(Drone.id == drone_id).one()
+        drone = db_session.query(Drone).filter(Drone.id == drone_id).one_or_none()
         if not drone:
             self.databaseRequests.send('{0} {1}'.format(Messages.FAIL.value, 'Drone with id {0} could not '
                                                                              'found'.format(drone_id)))
