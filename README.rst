@@ -1,5 +1,5 @@
-Beeswarm |Build Status| |coverage| |landscape| |version|
-==========================================================
+Beeswarm |Build Status| |coverage| |landscape|
+==============================================
 
 .. |Build Status| image:: https://travis-ci.org/honeynet/beeswarm.png?branch=master
                        :target: https://travis-ci.org/honeynet/beeswarm
@@ -15,6 +15,8 @@ Beeswarm is a honeypot project which provides easy configuration, deployment and
 Beeswarm operates by deploying fake end-user systems (clients) and services (honeypots). Beeswarm uses these systems to provides
 IoC (Indication of Compromise) by observing the difference between expected and actual traffic. 
 An IoC could be a certificate mismatch or the unexpected reuse of credentials (honeytokens).
+
+The Beeswarm system is currently in a proof of concept state.
 
 For detailed setup information check `the offical website 
 <http://www.beeswarm-ids.org/>`_.
