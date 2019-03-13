@@ -1,3 +1,7 @@
+THIS IS A OUT OF DATE PROJECT, NOTHING IS UPDATED ANYMORE!
+
+
+
 Beeswarm |Build Status| |coverage| |landscape|
 ==============================================
 
@@ -18,8 +22,6 @@ An IoC could be a certificate mismatch or the unexpected reuse of credentials (h
 
 The Beeswarm system is currently in a proof of concept state.
 
-For detailed setup information check `the offical website 
-<http://www.beeswarm-ids.org/>`_.
 
 Lead developer
 --------------
